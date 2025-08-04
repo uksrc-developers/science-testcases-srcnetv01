@@ -1,4 +1,4 @@
-*SWF-002-T1: Positional Cross-Match Test*
+# SWF-002-T1: Positional Cross-Match Test
 
 **Test Name:** SWF-002-T1: Positional cross-matching on multi-wave data
 
@@ -6,15 +6,15 @@
 
 **Confluence description:** https://confluence.skatelescope.org/pages/viewpage.action?pageId=319985104
 
-**Usage**
+## Usage
 
 To run the script, type `python SWF-002-T1_workflow.py my_folder"`, where `my_folder` is the folder that includes the `teal/` folder that hosts the data necessary to run these tests (the data must have been staged beforehand, if running on a specific node).
 
-**Summary** 
+## Summary
 This is a short script to run a simple positional cross-match between two catalogues, and links to the following confluence page ([Positional cross-matching on multi-wave data test](https://confluence.skatelescope.org/pages/viewpage.action?pageId=319985104)). It is based on the notebook with the same name. 
 This example uses the LOFAR Virgo Cluster Survey data set for the radio catalogue ([Virgo Cluster Survey](https://lofar-surveys.org/virgo_data.html)), and PanSTARRS ([PanSTARRS home page](https://outerspace.stsci.edu/display/PANSTARRS/)) for the optical data. The user is welcome to use any catalogues they have to hand.
 
-**Description:** 
+## Description:
 This notebook uses `astropy SkyCoord`'s `match_to_catalog_sky` to find the closest on-sky sources by RA and DEC and filter this down to those matches which are less than *1.5 arcsecs* in distance. The notebook is broken down into the following sections: 
 - Imports
     - This cell contains all the imports required.
