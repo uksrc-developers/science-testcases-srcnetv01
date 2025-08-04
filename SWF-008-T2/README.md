@@ -2,7 +2,7 @@
 
 This test loads simulated visibilities stored as uvfits files containing a mock EoR signal and foregrounds and estimates the EoR power spectrum from these visibilities using hydra-pspec. The test notebook walks through all of the steps required to run a hydra-pspec analysis and produces plots of the cylindrically and spherically averaged power spectrum of the EoR.
 
-For more details, please see this [confluence page](https://confluence.skatelescope.org/x/o2FoEw).
+For more details, please see the [SWF-008-T2 confluence page](https://confluence.skatelescope.org/x/o2FoEw).
 
 ## Dependencies
 
