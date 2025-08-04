@@ -52,7 +52,6 @@ from scipy.signal.windows import blackmanharris
 import time
 
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
 from matplotlib.colors import LinearSegmentedColormap, BoundaryNorm, LogNorm
 from matplotlib.gridspec import GridSpec
 from mpl_toolkits.axes_grid1 import ImageGrid
