@@ -452,7 +452,8 @@ for ax in axs:
     ax.grid()
     ax.set_ylim(np.array(ax.get_ylim()) + np.array([0, 3]))
     ax.set_xlim(np.array(ax.get_xlim()) + np.array([-3, 3]))
-fig.tight_layout();
+fig.tight_layout()
+fig.savefig("figure-1.pdf")
 # **Figure 1:** (Left) Antenna positions in East-North-Up units.
 # (Right) UV sampling of the baselines included in the simulations.
 
@@ -523,7 +524,8 @@ ax.fill_between(
 )
 ax.grid()
 ax.set_yscale("log")
-fig.tight_layout();
+fig.tight_layout()
+fig.savefig("figure-2.pdf")
 # **Figure 2:** Example (time-averaged) delay power spectrum for a antenna
 # pair (0, 1) (14.6 m EW baseline) in black.  The mock EoR sky model used in
 # the simulations is white noise and the corresponding power spectrum is flat
@@ -644,7 +646,8 @@ for ax in grid.axes_row[1]:
 fig.suptitle(
     "Noise Visibility Comparison\n"
     + f"antpair = {antpair}"
-);
+)
+fig.savefig("figure-3.pdf")
 # **Figure 3:** EoR (left) and noise visibility waterfalls (right) for antenna
 # pair (0, 1) (14.6 m EW baseline).  The top (bottom) row plots the real
 # (imaginary) component of the EoR and noise visibilities on the same
@@ -682,7 +685,8 @@ ax.plot(
 ax.set_yscale("log")
 ax.grid()
 ax.legend(loc="upper right")
-fig.tight_layout();
+fig.tight_layout()
+fig.savefig("figure-4.pdf")
 # **Figure 4:** Time-averaged EoR (solid) and noise (dash-dot) delay power
 # spectra for a antenna pair (0, 1) (14.6 m EW baseline).  We can see that
 # the average SNR over the entire delay range is ~10, our desired SNR in delay
@@ -724,7 +728,8 @@ for i_b, b in enumerate(unique_bl_lens):
             marker="o", color="k", alpha=0.5
         )
 ax.grid()
-fig.tight_layout();
+fig.tight_layout()
+fig.savefig("figure-5.pdf")
 # **Figure 5:** Number of foreground modes used for the foreground model as a
 # function of baseline length.  The number of foregrounds modes used by a
 # single baseline is plotted as a semi-transparent black circle.  In this case,
@@ -781,7 +786,8 @@ for i_mode, fgmode in enumerate(fgmodes_dict[antpair].T):
     ax_dps.plot(delays.to("ns"), dps_fgs.mean(axis=0), "k-", zorder=0)
 for ax in fig.axes:
     ax.grid()
-gs.tight_layout(fig);
+gs.tight_layout(fig)
+fig.savefig("figure-6.pdf")
 # **Figure 6:** (Top) Real (left) and imaginary (right) components of the
 # foreground model basis vectors for antenna pair (0, 1) (14.6 m EW baseline).
 # This plot uses the default matplotlib color sequence but if there are more
@@ -824,7 +830,8 @@ im = ax.imshow(
 )
 cb = fig.colorbar(im, ax=ax, pad=0.01)
 cb.set_ticks([0.5, 1.5], labels=["Unflagged", "Flagged"])
-fig.tight_layout();
+fig.tight_layout()
+fig.savefig("figure-7.pdf")
 # **Figure 7:** Flagging pattern used in this analysis.  The distribution of
 # flags was arbitrarily chosen but a selection of flagging gap widths has been
 # used.
@@ -956,7 +963,8 @@ fig.legend(
     frameon=False,
     bbox_to_anchor=(0.5, 0.9675),
     loc="upper center"
-);
+)
+fig.savefig("figure-8.pdf")
 # **Figure 8:** Recovered delay power spectrum summary statistics plot for
 # each baseline (one baseline per row).  The ultimate output of `hydra-pspec`
 # is a posterior for each delay bin.  Here we only show the mean and standard
@@ -1138,7 +1146,8 @@ for ax in grid.axes_all:
     ax.plot(k_perp_edges, k_para_horizons, "w--")
 
 fig.subplots_adjust(top=0.85)
-fig.suptitle("Cylindrically-Averaged Power Spectra");
+fig.suptitle("Cylindrically-Averaged Power Spectra")
+fig.savefig("figure-9.pdf")
 # **Figure 9:** Two-dimensional (cylindrically-averaged) delay power spectrum
 # estimates from `hydra-pspec` (left) compared to the input EoR visibilities
 # (center).  The right plot displays the ratio of the estimated power spectrum
@@ -1199,7 +1208,8 @@ ax.set_ylim([-0.5, 0.5])
 
 for ax in axs:
     ax.grid()
-fig.tight_layout();
+fig.tight_layout()
+fig.savefig("figure-10.pdf")
 # **Figure 10:** One-dimensional (spherically-averaged) power spectra.  The
 # solid line plots the power spectrum of the input EoR visibilities.  The data
 # points with errorbars represent the results from `hydra-pspec` plotted as

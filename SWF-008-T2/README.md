@@ -30,6 +30,8 @@ The code can be run as either a jupyter notebook (`SWF-008-T2.ipynb`) or a pytho
 python SWF-008-T2.py
 ```
 
+If running via the python script, the output figures will be saved to the current working directory as PDFs following a `figure-#.pdf` syntax.  For example, after running the script, Figure 1 in the notebook can be found in `figure-1.pdf`.
+
 ## SRCNet Links
 
 ### Confluence
