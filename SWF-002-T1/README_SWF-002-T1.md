@@ -21,10 +21,10 @@ This test is written in python and has the following dependencies:
 
 ## Running the code
 
-The code can be run as either a jupyter notebook (`SWF-002-T1.ipynb`) or a python script (`SWF-002-T1_workflow.py`) via
+The code can be run as either a jupyter notebook (`SWF-002-T1.ipynb`) or a python script (`SWF-002-T1.py`) via
 
 ```
-python SWF-002-T1_workflow.py my_folder
+python SWF-002-T1.py my_folder
 ```
 where `my_folder` is the folder that includes the `teal/` folder that hosts the data necessary to run these tests (the data must have been staged beforehand, if running on a specific node).
 
