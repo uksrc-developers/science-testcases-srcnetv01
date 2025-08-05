@@ -44,7 +44,7 @@ def main():
     
     base_path = f"{home_folder}/teal/"
     result_path = f"{home_folder}/testcases-results/"
-    result_path += "/SWF-002-T1"
+    result_path += "/SWF-002-T1/"
     if not os.path.exists(result_path):
         os.makedirs(result_path)
     
