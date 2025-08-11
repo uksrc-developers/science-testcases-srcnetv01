@@ -21,18 +21,9 @@ import seaborn as sns
 sns.set_palette('dark')
 palette = sns.color_palette('dark')
 
-home_folder = str(sys.argv[1])
 logger = logging.getLogger(__name__)
 
 def main():
-    logging.basicConfig(
-        filename=f'{home_folder}/profiling_tests/SWF-002-T1/SWF-002-T1_workflow.log',
-        filemode='w',
-        level=logging.INFO,
-        format="%(message)s",
-    )
-    logger.info('\nStarted running the workflow.')
-
     ## Load in files
     
     # Firstly the files need to be loaded. Here the radio catalogue should be uploaded to the SKA storage. The optical data can either be the one stored or can be searched for using `astroyquery`. Be aware that `astroquery` will restrict the search to the first 50 rows, despite being set to unlimit rows requested.
@@ -41,13 +32,32 @@ def main():
     
     # Load files - radio is uploaded to Rucio. Optical is either uploaded to Rucio or Panstarrs can be queried using astroquery but restricts to only the first 50 rows.
     
+    # set up paths        
+    config_file = './config/config.yml'
+    if os.path.exists(config_file):
+        with open(config_file, "r") as f:
+            config = yaml.safe_load(f)
+    else:
+        warnings.warn(f"! Configuration file '{config_file}' not found. Using default settings.", UserWarning)
+        config = {}
+        
+    default_base_path = "../datasets"
+    base_path = config.get("data_path")
+    if base_path is None:
+        warnings.warn(f"! 'data_path' not found in '{config_file}'. Using default path '{default_base_path}'.", UserWarning)
+        base_path = default_base_path
     
-    base_path = f"{home_folder}/teal/"
-    result_path = f"{home_folder}/testcases-results/"
+    default_result_path = "../results"
+    result_path = config.get("result_path")
+    if result_path is None:
+        warnings.warn(f"! 'result_path' not found in '{config_file}'. Using default: '{default_result_path}'.", UserWarning)
+        result_path = default_result_path
     result_path += "/SWF-002-T1/"
     if not os.path.exists(result_path):
         os.makedirs(result_path)
-    
+    # Add path to save any plots and tables
+    save_path = result_path 
+
     # Adjust file path for storage location
     radio_path = base_path + '/lofar_virgo_full.fits'                       
     # Read in radio catalogue as astropy table
@@ -56,11 +66,18 @@ def main():
     optical_path = base_path + '/panstarrs_2deg.fits'
     # Read in optical catalogue as astropy table comment out if using astroquery
     optical_cat = Table.read(optical_path)
-    
-    # Setting the save location for any tables and plots that want to be saved
-    # Add path to save any plots and tables
-    save_path = result_path                                              
-    
+
+    # Set up log file
+    if not os.path.exists(f'{result_path}profiling/'):
+        os.makedirs(f'{result_path}profiling/')
+    logging.basicConfig(
+        filename=f'{result_path}/profiling/SWF-002-T1.log',
+        filemode='w',
+        level=logging.INFO,
+        format="%(message)s",
+    )
+    logger.info('\nStarted running the workflow.')
+
     # Setting the parameters for the search - radius and centre location
     centre_coords = SkyCoord(ra = 187.5 * u.deg, dec = 10.0 * u.deg, frame='icrs')                  # Defining the centre coordinates
     opt_rad = 2.1 * u.deg                                                                           # Selecting a slightly larger optical radius than a radio one

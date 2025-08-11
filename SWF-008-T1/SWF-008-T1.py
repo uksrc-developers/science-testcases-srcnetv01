@@ -19,7 +19,6 @@ import sys
 
 from ps_eor import datacube, pspec, psutil
 
-home_folder = str(sys.argv[1])
 logger = logging.getLogger(__name__)
 
 ## General parameters
@@ -172,23 +171,46 @@ def reduce_file(filename, spw_range):
 
     
 def main():
-    logging.basicConfig(
-        filename=f'{home_folder}/profiling_tests/SWF-008-T1/SWF-008-T1_workflow.log',
-        filemode='w',
-        level=logging.INFO,
-        format="%(message)s",
-    )
-    logger.info('\nStarted running the workflow.')
 
     # set up paths        
-    base_path = f"{home_folder}/teal/"
-    result_path = f"{home_folder}/testcases-results/"
+    config_file = './config/config.yml'
+    if os.path.exists(config_file):
+        with open(config_file, "r") as f:
+            config = yaml.safe_load(f)
+    else:
+        warnings.warn(f"! Configuration file '{config_file}' not found. Using default settings.", UserWarning)
+        config = {}
+        
+    default_base_path = "../datasets"
+    base_path = config.get("data_path")
+    if base_path is None:
+        warnings.warn(f"! 'data_path' not found in '{config_file}'. Using default path '{default_base_path}'.", UserWarning)
+        base_path = default_base_path
+    datafolder = base_path +"/" # where to find the downloaded data - here, on Azimuth
+    
+    default_result_path = "../results"
+    result_path = config.get("result_path")
+    if result_path is None:
+        warnings.warn(f"! 'result_path' not found in '{config_file}'. Using default: '{default_result_path}'.", UserWarning)
+        result_path = default_result_path
     result_path += "/SWF-008-T1/"
     if not os.path.exists(result_path):
         os.makedirs(result_path)
     # Add path to save any plots and tables
     save_path = result_path 
 
+    # Set up log file
+    if not os.path.exists(f'{result_path}profiling/'):
+        os.makedirs(f'{result_path}profiling/')
+    logging.basicConfig(
+        filename=f'{result_path}profiling/SWF-008-T1.log',
+        filemode='w',
+        level=logging.INFO,
+        format="%(message)s",
+    )
+    logger.info('\nStarted running the workflow.')
+
+    
     # BINS TO USE FOR HISTOGRAMMING
     
     # k-range
