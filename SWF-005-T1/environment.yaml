@@ -1,0 +1,8 @@
+name: swf005
+channels:
+  - conda-forge
+dependencies:
+  - astropy
+  - astroquery
+  - python
+  - matplotlib
