@@ -21,9 +21,16 @@ import seaborn as sns
 sns.set_palette('dark')
 palette = sns.color_palette('dark')
 
-logger = logging.getLogger(__name__)
 
 def main():
+    logging.basicConfig(
+        filename=f'{home_folder}/profiling_tests/SWF-002-T1/SWF-002-T1_workflow.log',
+        filemode='w',
+        level=logging.INFO,
+        format="%(message)s",
+    )
+    logger.info('\nStarted running the workflow.')
+
     ## Load in files
     
     # Firstly the files need to be loaded. Here the radio catalogue should be uploaded to the SKA storage. The optical data can either be the one stored or can be searched for using `astroyquery`. Be aware that `astroquery` will restrict the search to the first 50 rows, despite being set to unlimit rows requested.
@@ -82,7 +89,6 @@ def main():
     centre_coords = SkyCoord(ra = 187.5 * u.deg, dec = 10.0 * u.deg, frame='icrs')                  # Defining the centre coordinates
     opt_rad = 2.1 * u.deg                                                                           # Selecting a slightly larger optical radius than a radio one
     rad_rad = 2 * u.deg                                                                             # Selecting a slightly smaller radio radius than an optical one
-    
     
     ## Catalogue information check and column set up ##
      
