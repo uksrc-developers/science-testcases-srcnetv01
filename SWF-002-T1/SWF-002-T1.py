@@ -20,18 +20,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_palette('dark')
 palette = sns.color_palette('dark')
-
-home_folder = str(sys.argv[1])
 logger = logging.getLogger(__name__)
 
 def main():
-    logging.basicConfig(
-        filename=f'{home_folder}/profiling_tests/SWF-002-T1/SWF-002-T1_workflow.log',
-        filemode='w',
-        level=logging.INFO,
-        format="%(message)s",
-    )
-    logger.info('\nStarted running the workflow.')
 
     ## Load in files
     
@@ -41,32 +32,71 @@ def main():
     
     # Load files - radio is uploaded to Rucio. Optical is either uploaded to Rucio or Panstarrs can be queried using astroquery but restricts to only the first 50 rows.
     
+    # set up paths        
+    config_file = './config/config.yml'
+    if os.path.exists(config_file):
+        with open(config_file, "r") as f:
+            config = yaml.safe_load(f)
+    else:
+        warnings.warn(f"! Configuration file '{config_file}' not found. Using default settings.", UserWarning)
+        config = {}
+        
+    default_base_path = "../datasets"
+    base_path = config.get("data_path")
+    if base_path is None:
+        warnings.warn(f"! 'data_path' not found in '{config_file}'. Using default path '{default_base_path}'.", UserWarning)
+        base_path = default_base_path
     
-    base_path = f"{home_folder}/teal/"
-    result_path = f"{home_folder}/testcases-results/"
-    result_path += "/SWF-002-T1/"
+    default_result_path = "../results"
+    result_path = config.get("result_path")
+    if result_path is None:
+        warnings.warn(f"! 'result_path' not found in '{config_file}'. Using default: '{default_result_path}'.", UserWarning)
+        result_path = default_result_path
+    result_path = os.path.join(result_path, 'SWF-002-T1')
+    print(result_path)
     if not os.path.exists(result_path):
-        os.makedirs(result_path)
-    
-    # Adjust file path for storage location
-    radio_path = base_path + '/lofar_virgo_full.fits'                       
-    # Read in radio catalogue as astropy table
-    radio_cat = Table.read(radio_path)                                      
-    # Adjust file path for storage location
-    optical_path = base_path + '/panstarrs_2deg.fits'
-    # Read in optical catalogue as astropy table comment out if using astroquery
-    optical_cat = Table.read(optical_path)
-    
-    # Setting the save location for any tables and plots that want to be saved
+        os.makedirs(result_path, exist_ok=True)
     # Add path to save any plots and tables
-    save_path = result_path                                              
-    
+    save_path = result_path 
+
+    # Adjust file path for storage location
+    radio_path = os.path.join(base_path, 'lofar_virgo_full.fits')
+    # Read in radio catalogue as astropy table
+    radio_cat = Table.read(radio_path)    
     # Setting the parameters for the search - radius and centre location
-    centre_coords = SkyCoord(ra = 187.5 * u.deg, dec = 10.0 * u.deg, frame='icrs')                  # Defining the centre coordinates
-    opt_rad = 2.1 * u.deg                                                                           # Selecting a slightly larger optical radius than a radio one
-    rad_rad = 2 * u.deg                                                                             # Selecting a slightly smaller radio radius than an optical one
-    
-    
+    centre_coords = SkyCoord(ra = 187.5 * u.deg, dec = 10.0 * u.deg, frame='icrs')  # Defining the centre coordinates
+    opt_rad = 2.1 * u.deg  # Selecting a slightly larger optical radius than a radio one
+    rad_rad = 2 * u.deg  # Selecting a slightly smaller radio radius than an optical one
+    # Adjust file path for storage location
+    optical_path = os.path.join(base_path, 'panstarrs_2deg.fits')
+    if os.path.exists(optical_path):
+        # Read in optical catalogue as astropy table 
+        optical_cat = Table.read(optical_path)
+        logger.info(f'Read optical catalog from file at {optical_path}.')
+    else:
+        # Use astroquery
+        vizier = Vizier(row_limit=20000)
+        pans_cat_id = 'II/349/ps1'
+        pans_result = vizier.query_region(centre_coords, radius=opt_rad, catalog=pans_cat_id)
+        if not pans_result:
+            print("No Pan-STARRS sources found.")
+        else:
+            panstarrs_table = pans_result[0]
+            print(f"Found {len(panstarrs_table)} Pan-STARRS sources")
+        optical_cat = pans_result[0]
+        logger.info(f'Imported optical catalog with astroquery.')
+
+    # Set up log file
+    if not os.path.exists(f'{result_path}profiling/'):
+        os.makedirs(f'{result_path}profiling/')
+    logging.basicConfig(
+        filename=f'{result_path}/profiling/SWF-002-T1.log',
+        filemode='w',
+        level=logging.INFO,
+        format="%(message)s",
+    )
+    logger.info('\nStarted running the workflow.')
+
     ## Catalogue information check and column set up ##
      
     # The following is a quick check on the catalogues that have been loaded in. This is important for checking the name of the columns and the units that may be assigned.
@@ -109,7 +139,7 @@ def main():
     ax1.set_ylabel('Dec (degrees)')
     ax1.set_title('Full Radio and Optical Sky Coverage')
     ax1.legend(loc='upper right')
-    fig.savefig(save_path+'Xmatch_test_fullcoverage.png', dpi = 300)                                     # Save the figure if uncommented
+    fig.savefig(os.path.join(save_path, 'Xmatch_test_fullcoverage.png'), dpi = 300)                                     # Save the figure if uncommented
     logger.info(f'{save_path}Xmatch_test_fullcoverage.png figure saved.')
     
     # Now plot the filtered radio and optical catalogues
@@ -122,7 +152,7 @@ def main():
     ax2.set_ylabel('Dec (degrees)')
     ax2.set_title('Filtered Radio and Optical Sky Coverage')
     ax2.legend(loc='upper right')
-    fig2.savefig(save_path+'Xmatch_test_filteredcoverage.png', dpi = 300)                                  # Save the figure if uncommented
+    fig2.savefig(os.path.join(save_path, 'Xmatch_test_filteredcoverage.png'), dpi = 300)                                  # Save the figure if uncommented
     logger.info(f'{save_path}Xmatch_test_filteredcoverage.png figure saved.')
 
     ## Positional cross-matching ##
@@ -172,7 +202,7 @@ def main():
     ax.set_xlabel('Separation (arcsec)')
     ax.set_ylabel('Number of matches')
     ax.set_title('Distribution of closest match separations')
-    fig.savefig(save_path+'Xmatch_test_separationdistribution.png', dpi = 300)                              # Save the figure if uncommented
+    fig.savefig(os.path.join(save_path, 'Xmatch_test_separationdistribution.png'), dpi = 300)                              # Save the figure if uncommented
     logger.info(f'{save_path}Xmatch_test_separationdistribution.png figure saved.')
     
     # Plotting the position of the radio matches, shaded according to the on-sky separation from the optical sources.
@@ -186,7 +216,7 @@ def main():
     ax3.set_xlabel('RA (degrees)')
     ax3.set_ylabel('Dec (degrees)')
     ax3.set_title('Radio matches shaded by separation to their optical match')
-    fig3.savefig(save_path+'Xmatch_test_shadedposition.png', dpi = 300)                                          # Save the figure if uncommented
+    fig3.savefig(os.path.join(save_path, 'Xmatch_test_shadedposition.png'), dpi = 300)                                          # Save the figure if uncommented
     logger.info(f'{save_path}Xmatch_test_shadedposition.png figure saved.')
 
     logger.info('Finished.')

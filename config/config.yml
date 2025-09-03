@@ -1,2 +1,4 @@
 result_path: "../../testcases-results"
 data_path: "../../teal"
+test_path: "../../"
+psrecord_path: "~/.local/bin"
