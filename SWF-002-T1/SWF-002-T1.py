@@ -20,16 +20,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_palette('dark')
 palette = sns.color_palette('dark')
-
+logger = logging.getLogger(__name__)
 
 def main():
-    logging.basicConfig(
-        filename=f'{home_folder}/profiling_tests/SWF-002-T1/SWF-002-T1_workflow.log',
-        filemode='w',
-        level=logging.INFO,
-        format="%(message)s",
-    )
-    logger.info('\nStarted running the workflow.')
 
     ## Load in files
     
