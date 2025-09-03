@@ -186,7 +186,7 @@ def main():
     if base_path is None:
         warnings.warn(f"! 'data_path' not found in '{config_file}'. Using default path '{default_base_path}'.", UserWarning)
         base_path = default_base_path
-    datafolder = base_path +"/" # where to find the downloaded data - here, on Azimuth
+    datafolder = base_path # where to find the downloaded data - here, on Azimuth
     
     default_result_path = "../results"
     result_path = config.get("result_path")
@@ -194,15 +194,15 @@ def main():
         warnings.warn(f"! 'result_path' not found in '{config_file}'. Using default: '{default_result_path}'.", UserWarning)
         result_path = default_result_path
 
-    result_path += "/SWF-008-T1/"
+    result_path = os.path.join(result_path, "SWF-008-T1")
     if not os.path.exists(result_path):
-        os.makedirs(result_path)
+        os.makedirs(result_path, exist_ok=True)
     # Add path to save any plots and tables
     save_path = result_path 
 
     # Set up log file
     if not os.path.exists(f'{result_path}profiling/'):
-        os.makedirs(f'{result_path}profiling/')
+        os.makedirs(f'{result_path}profiling/', exist_ok=True)
     logging.basicConfig(
         filename=f'{result_path}profiling/SWF-008-T1.log',
         filemode='w',
@@ -317,7 +317,7 @@ def main():
         ax=ax,
     )
     fig.tight_layout()
-    fig.savefig(save_path+'cylindrical_eor_ps_from_image.png', dpi = 300)  # Save the figure if uncommented
+    fig.savefig(os.path.join(save_path, 'cylindrical_eor_ps_from_image.png'), dpi = 300)  # Save the figure if uncommented
     logger.info(f'{save_path}cylindrical_eor_ps_from_image.png figure saved.')
     
     logger.info('Finished.')

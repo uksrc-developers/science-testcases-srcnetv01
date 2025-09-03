@@ -52,14 +52,15 @@ def main():
     if result_path is None:
         warnings.warn(f"! 'result_path' not found in '{config_file}'. Using default: '{default_result_path}'.", UserWarning)
         result_path = default_result_path
-    result_path += "/SWF-002-T1/"
+    result_path = os.path.join(result_path, 'SWF-002-T1')
+    print(result_path)
     if not os.path.exists(result_path):
-        os.makedirs(result_path)
+        os.makedirs(result_path, exist_ok=True)
     # Add path to save any plots and tables
     save_path = result_path 
 
     # Adjust file path for storage location
-    radio_path = base_path + '/lofar_virgo_full.fits'                       
+    radio_path = os.path.join(base_path, 'lofar_virgo_full.fits')
     # Read in radio catalogue as astropy table
     radio_cat = Table.read(radio_path)    
     # Setting the parameters for the search - radius and centre location
@@ -67,7 +68,7 @@ def main():
     opt_rad = 2.1 * u.deg  # Selecting a slightly larger optical radius than a radio one
     rad_rad = 2 * u.deg  # Selecting a slightly smaller radio radius than an optical one
     # Adjust file path for storage location
-    optical_path = base_path + '/panstarrs_2deg.fits'
+    optical_path = os.path.join(base_path, 'panstarrs_2deg.fits')
     if os.path.exists(optical_path):
         # Read in optical catalogue as astropy table 
         optical_cat = Table.read(optical_path)
@@ -138,7 +139,7 @@ def main():
     ax1.set_ylabel('Dec (degrees)')
     ax1.set_title('Full Radio and Optical Sky Coverage')
     ax1.legend(loc='upper right')
-    fig.savefig(save_path+'Xmatch_test_fullcoverage.png', dpi = 300)                                     # Save the figure if uncommented
+    fig.savefig(os.path.join(save_path, 'Xmatch_test_fullcoverage.png'), dpi = 300)                                     # Save the figure if uncommented
     logger.info(f'{save_path}Xmatch_test_fullcoverage.png figure saved.')
     
     # Now plot the filtered radio and optical catalogues
@@ -151,7 +152,7 @@ def main():
     ax2.set_ylabel('Dec (degrees)')
     ax2.set_title('Filtered Radio and Optical Sky Coverage')
     ax2.legend(loc='upper right')
-    fig2.savefig(save_path+'Xmatch_test_filteredcoverage.png', dpi = 300)                                  # Save the figure if uncommented
+    fig2.savefig(os.path.join(save_path, 'Xmatch_test_filteredcoverage.png'), dpi = 300)                                  # Save the figure if uncommented
     logger.info(f'{save_path}Xmatch_test_filteredcoverage.png figure saved.')
 
     ## Positional cross-matching ##
@@ -201,7 +202,7 @@ def main():
     ax.set_xlabel('Separation (arcsec)')
     ax.set_ylabel('Number of matches')
     ax.set_title('Distribution of closest match separations')
-    fig.savefig(save_path+'Xmatch_test_separationdistribution.png', dpi = 300)                              # Save the figure if uncommented
+    fig.savefig(os.path.join(save_path, 'Xmatch_test_separationdistribution.png'), dpi = 300)                              # Save the figure if uncommented
     logger.info(f'{save_path}Xmatch_test_separationdistribution.png figure saved.')
     
     # Plotting the position of the radio matches, shaded according to the on-sky separation from the optical sources.
@@ -215,7 +216,7 @@ def main():
     ax3.set_xlabel('RA (degrees)')
     ax3.set_ylabel('Dec (degrees)')
     ax3.set_title('Radio matches shaded by separation to their optical match')
-    fig3.savefig(save_path+'Xmatch_test_shadedposition.png', dpi = 300)                                          # Save the figure if uncommented
+    fig3.savefig(os.path.join(save_path, 'Xmatch_test_shadedposition.png'), dpi = 300)                                          # Save the figure if uncommented
     logger.info(f'{save_path}Xmatch_test_shadedposition.png figure saved.')
 
     logger.info('Finished.')

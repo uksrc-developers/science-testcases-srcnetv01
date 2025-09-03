@@ -39,7 +39,7 @@ def main():
     if result_path is None:
         warnings.warn(f"! 'result_path' not found in '{config_file}'. Using default: '{default_result_path}'.", UserWarning)
         result_path = default_result_path
-    result_path += "/SWF-005-T1/"
+    result_path = os.path.join(result_path, "SWF-005-T1")
     if not os.path.exists(result_path):
         os.makedirs(result_path)
     # Add path to save any plots and tables
