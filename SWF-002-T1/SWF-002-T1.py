@@ -61,11 +61,29 @@ def main():
     # Adjust file path for storage location
     radio_path = base_path + '/lofar_virgo_full.fits'                       
     # Read in radio catalogue as astropy table
-    radio_cat = Table.read(radio_path)                                      
+    radio_cat = Table.read(radio_path)    
+    # Setting the parameters for the search - radius and centre location
+    centre_coords = SkyCoord(ra = 187.5 * u.deg, dec = 10.0 * u.deg, frame='icrs')  # Defining the centre coordinates
+    opt_rad = 2.1 * u.deg  # Selecting a slightly larger optical radius than a radio one
+    rad_rad = 2 * u.deg  # Selecting a slightly smaller radio radius than an optical one
     # Adjust file path for storage location
     optical_path = base_path + '/panstarrs_2deg.fits'
-    # Read in optical catalogue as astropy table comment out if using astroquery
-    optical_cat = Table.read(optical_path)
+    if os.path.exists(optical_path):
+        # Read in optical catalogue as astropy table 
+        optical_cat = Table.read(optical_path)
+        logger.info(f'Read optical catalog from file at {optical_path}.')
+    else:
+        # Use astroquery
+        vizier = Vizier(row_limit=20000)
+        pans_cat_id = 'II/349/ps1'
+        pans_result = vizier.query_region(centre_coords, radius=opt_rad, catalog=pans_cat_id)
+        if not pans_result:
+            print("No Pan-STARRS sources found.")
+        else:
+            panstarrs_table = pans_result[0]
+            print(f"Found {len(panstarrs_table)} Pan-STARRS sources")
+        optical_cat = pans_result[0]
+        logger.info(f'Imported optical catalog with astroquery.')
 
     # Set up log file
     if not os.path.exists(f'{result_path}profiling/'):
@@ -78,11 +96,6 @@ def main():
     )
     logger.info('\nStarted running the workflow.')
 
-    # Setting the parameters for the search - radius and centre location
-    centre_coords = SkyCoord(ra = 187.5 * u.deg, dec = 10.0 * u.deg, frame='icrs')                  # Defining the centre coordinates
-    opt_rad = 2.1 * u.deg                                                                           # Selecting a slightly larger optical radius than a radio one
-    rad_rad = 2 * u.deg                                                                             # Selecting a slightly smaller radio radius than an optical one
-    
     ## Catalogue information check and column set up ##
      
     # The following is a quick check on the catalogues that have been loaded in. This is important for checking the name of the columns and the units that may be assigned.
