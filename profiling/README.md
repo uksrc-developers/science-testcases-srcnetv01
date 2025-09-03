@@ -22,6 +22,8 @@ Additional dependencies might be required, depending on which test you want to p
 4. Run the profiling script by typing in your command line: `./profiling_script.sh test_name` where `test_name` is the code describing the test you want to profile (e.g., SWF-002-T1). Note that you might need to run `chmod u+x profiling_script.sh` to make the script executable and you must have `psrecord` installed, with python>=3.7.
 5. Read the outputs from `result_path/test_name/profiling/`: the logfile summarises the profiling results in a format that is easy to input in the [reporting form](https://forms.gle/ZQwsdQNxTnsC1fRG6) and image files are ready to be uploaded in the form.
 
+Note that `psrecord` cannot profile I/O on Mac OSX -- you need to remove the `--include-io` in the profiling script and all I/O-related outputs from the `monitor_activity` script to run the profiling workflow on Mac OSX.
+
 ## SRCNet Links
 
 ### Confluence
